@@ -35,7 +35,7 @@ jobs:
     - name: Build and analyze
       uses: eskatos/gradle-command-action@v1
       with:
-        arguments: clean build jacocoTestReport sonarqube
+        arguments: clean build jacocoTestReport ${SONAR_TOKEN:+sonarqube}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

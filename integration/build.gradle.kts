@@ -1,21 +1,16 @@
 import de.undercouch.gradle.tasks.download.Download
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("java-library")
+  id("conventions")
   id("com.worksap.nlp.sudachi.es")
   id("com.worksap.nlp.sudachi.esc")
   id("com.worksap.nlp.sudachi.es.testenv")
-  id("com.diffplug.spotless")
   id("org.jetbrains.kotlin.jvm")
   id("de.undercouch.download") version "5.4.0"
 }
 
 version = properties["pluginVersion"] ?: "SNAPSHOT"
-
-tasks.compileKotlin { compilerOptions.jvmTarget.set(JvmTarget.JVM_11) }
-
-tasks.compileTestKotlin { compilerOptions.jvmTarget.set(JvmTarget.JVM_11) }
 
 val buildSudachiDict by configurations.creating {}
 
@@ -104,32 +99,3 @@ val distZip =
     }
 
 artifacts { archives(distZip) }
-
-spotless {
-  // watch for https://github.com/diffplug/spotless/issues/911 to be closed
-  ratchetFrom("origin/develop")
-  encoding("UTF-8") // all formats will be interpreted as UTF-8
-  val formatter = rootProject.projectDir.toPath().resolve(".formatter")
-
-  format("misc") {
-    target("*.gradle", "*.md", ".gitignore", "*.txt", "*.csv")
-
-    trimTrailingWhitespace()
-    indentWithSpaces(2)
-    endWithNewline()
-  }
-  java {
-    // don"t need to set target, it is inferred from java
-    // version list:
-    // https://github.com/diffplug/spotless/tree/main/lib-extra/src/main/resources/com/diffplug/spotless/extra/eclipse_jdt_formatter
-
-    eclipse("4.21.0").configFile(formatter.resolve("eclipse-formatter.xml"))
-    licenseHeaderFile(formatter.resolve("license-header"))
-  }
-  kotlin {
-    // by default the target is every ".kt" and ".kts` file in the java sourcesets
-    ktfmt("0.39")
-    licenseHeaderFile(formatter.resolve("license-header"))
-  }
-  kotlinGradle { ktfmt() }
-}

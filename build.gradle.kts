@@ -1,11 +1,7 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("java-library")
-  id("org.jetbrains.kotlin.jvm") version "1.8.0"
+  id("conventions")
   id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
-  id("com.diffplug.spotless") version "6.16.0"
   id("org.sonarqube") version "4.0.0.2929"
   id("org.jetbrains.kotlinx.kover") version "0.7.0"
   id("com.worksap.nlp.sudachi.esc")
@@ -18,8 +14,6 @@ group = "com.worksap.nlp"
 val archivesBaseName = "analysis-sudachi"
 
 version = properties["pluginVersion"] ?: "SNAPSHOT"
-
-tasks.withType<KotlinCompile>().configureEach { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
 
 val spi by configurations.creating {}
 
@@ -57,7 +51,7 @@ val embedVersion =
 val packageJars =
     tasks.register<Copy>("packageJars") {
       from(configurations.runtimeClasspath)
-      from(tasks.jar.map { it.outputs })
+      from(tasks.jar)
       val esKind = sudachiEs.kind.get()
       into("build/package/$version/${esKind.engine.kind}-${esKind.version}")
       dependsOn(tasks.jar)
@@ -91,34 +85,6 @@ koverReport {
   defaults {
     xml { setReportFile(layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml")) }
   }
-}
-
-// See https://github.com/diffplug/spotless/tree/main/plugin-gradle
-spotless {
-  // watch for https://github.com/diffplug/spotless/issues/911 to be closed
-  ratchetFrom("origin/develop")
-  encoding("UTF-8") // all formats will be interpreted as UTF-8
-
-  format("misc") {
-    target("*.gradle", "*.md", ".gitignore", "*.txt", "*.csv")
-
-    trimTrailingWhitespace()
-    indentWithSpaces(2)
-    endWithNewline()
-  }
-  java {
-    // don"t need to set target, it is inferred from java
-    // version list:
-    // https://github.com/diffplug/spotless/tree/main/lib-extra/src/main/resources/com/diffplug/spotless/extra/eclipse_jdt_formatter
-    eclipse("4.21.0").configFile(".formatter/eclipse-formatter.xml")
-    licenseHeaderFile(".formatter/license-header")
-  }
-  kotlin {
-    // by default the target is every ".kt" and ".kts` file in the java sourcesets
-    ktfmt("0.39")
-    licenseHeaderFile(".formatter/license-header")
-  }
-  kotlinGradle { ktfmt() }
 }
 
 sonarqube {

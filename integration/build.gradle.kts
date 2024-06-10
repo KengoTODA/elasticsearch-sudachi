@@ -34,7 +34,7 @@ val compileSystemDictionary =
       val matrixFile = dictRoot.resolve("matrix.def")
       val dataFile = dictRoot.resolve("lex.csv")
       val resultFile = layout.buildDirectory.file("generated/dict/system.dict")
-      args("-d", "test dictionary", "-m", matrixFile, "-o", resultFile, dataFile)
+      args("-d", "test dictionary", "-m", matrixFile, "-o", resultFile.get(), dataFile)
       inputs.file(matrixFile)
       inputs.file(dataFile)
       outputs.file(resultFile)

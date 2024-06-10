@@ -7,8 +7,6 @@ plugins {
 
 group = "com.worksap.nlp"
 
-val archivesBaseName = "analysis-sudachi"
-
 version = properties["pluginVersion"] ?: "SNAPSHOT"
 
 dependencies { compileOnly(project(":spi")) }
@@ -39,7 +37,7 @@ val distZip =
     tasks.register<Zip>("distZip") {
       val esKind = sudachiEs.kind.get()
       dependsOn(embedVersion, packageJars)
-      archiveBaseName.set("${esKind.engine.kind}-${esKind.version}-$archivesBaseName")
+      archiveBaseName.set("${esKind.engine.kind}-${esKind.version}-subplugin")
       from("build/package/${version}/${esKind.engine.kind}-${esKind.version}")
     }
 

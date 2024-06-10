@@ -13,8 +13,6 @@ plugins {
 
 version = properties["pluginVersion"] ?: "SNAPSHOT"
 
-val archivesBaseName = "analysis-sudachi"
-
 tasks.compileKotlin { compilerOptions.jvmTarget.set(JvmTarget.JVM_11) }
 
 tasks.compileTestKotlin { compilerOptions.jvmTarget.set(JvmTarget.JVM_11) }
@@ -100,7 +98,7 @@ tasks.test {
 val distZip =
     tasks.register<Zip>("distZip") {
       val esKind = sudachiEs.kind.get()
-      archiveBaseName.set("${esKind.engine.kind}-${esKind.version}-$archivesBaseName")
+      archiveBaseName.set("${esKind.engine.kind}-${esKind.version}-integration")
       from(
           project(":subplugin").tasks.named("packageJars").map { outputs.files },
           project(":subplugin").tasks.named("embedVersion").map { outputs.files },

@@ -1,5 +1,0 @@
-rootProject.name = "elasticsearch-sudachi"
-include 'spi'
-include 'testlib'
-include 'subplugin'
-include 'integration'

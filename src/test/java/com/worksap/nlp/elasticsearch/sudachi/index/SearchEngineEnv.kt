@@ -43,7 +43,7 @@ class SearchEngineEnv(vararg components: String = arrayOf("system")) : ExternalR
     val nodeSettings =
         Settings.builder().put(Environment.PATH_HOME_SETTING.key, testDic.root.path).build()
     val env = TestEnvironment.newEnvironment(nodeSettings)
-    makeAnalysisModule(env, AnalysisSudachiPlugin(nodeSettings))
+    makeAnalysisModule(env, AnalysisSudachiPlugin())
   }
 
   val analysisRegistry

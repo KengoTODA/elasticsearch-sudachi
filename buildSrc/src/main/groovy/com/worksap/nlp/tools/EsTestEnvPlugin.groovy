@@ -49,67 +49,6 @@ class PluginDescriptor {
     }
 }
 
-class StringProvider implements Provider<String>, Serializable {
-    private static final long serialVersionUID = 42L
-    String value
-
-    @Override
-    String get() {
-        return value
-    }
-
-    @Override
-    String getOrNull() {
-        return value
-    }
-
-    @Override
-    String getOrElse(String defaultValue) {
-        if (value == null) return defaultValue else return value
-    }
-
-    @Override
-    def <S> Provider<S> map(Transformer<? extends S, ? super String> transformer) {
-        throw new IllegalStateException("not implemented")
-    }
-
-    @Override
-    def <S> Provider<S> flatMap(Transformer<? extends Provider<? extends S>, ? super String> transformer) {
-        throw new IllegalStateException("not implemented")
-    }
-
-    @Override
-    boolean isPresent() {
-        return value != null
-    }
-
-    @Override
-    Provider<String> orElse(String value) {
-        return this
-    }
-
-    @Override
-    Provider<String> orElse(Provider<? extends String> provider) {
-        if (value == null) return provider else return this
-    }
-
-    @Override
-    Provider<String> forUseAtConfigurationTime() {
-        return this
-    }
-
-    @Override
-    def <U, R> Provider<R> zip(Provider<U> right, BiFunction<? super String, ? super U, ? extends R> combiner) {
-        throw new IllegalStateException("not implemented")
-    }
-
-
-    @Override
-    String toString() {
-        return value;
-    }
-}
-
 class EsTestEnvPlugin implements Plugin<Project> {
 
     private final ObjectFactory objectFactory
@@ -124,12 +63,12 @@ class EsTestEnvPlugin implements Plugin<Project> {
         EsTestEnvExtension ext = new EsTestEnvExtension()
         target.extensions.add(EsTestEnvExtension.class, "esTestEnv", ext)
         target.tasks.named("test").configure { Test task ->
-            Provider<String> envRoot = new StringProvider()
+            Provider<String> envRoot = project.objects.property(String)
             Path esHomePath = target.buildDir.toPath().resolve("es-env")
-            envRoot.setValue(esHomePath.toString())
+            envRoot.set(esHomePath.toString())
             task.systemProperty("sudachi.es.root", envRoot)
             task.doFirst {
-                envRoot.setValue(prepareEnvironment(target, task, esHomePath, ext).toString())
+                envRoot.set(prepareEnvironment(target, task, esHomePath, ext).toString())
             }
             task.doLast { cleanupEnvironment(esHomePath) }
             ext.additionalPlugins.forEach {

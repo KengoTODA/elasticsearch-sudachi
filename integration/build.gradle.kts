@@ -38,7 +38,7 @@ val compileSystemDictionary =
       val dictRoot = rootProject.file("src/test/resources/dict").toPath()
       val matrixFile = dictRoot.resolve("matrix.def")
       val dataFile = dictRoot.resolve("lex.csv")
-      val resultFile = layout.buildDirectory.map { it.file("generated/dict/system.dict") }
+      val resultFile = layout.buildDirectory.file("generated/dict/system.dict")
       args("-d", "test dictionary", "-m", matrixFile, "-o", resultFile, dataFile)
       inputs.file(matrixFile)
       inputs.file(dataFile)
@@ -51,14 +51,11 @@ val downloadIcuPlugin =
       if (sudachiEs.isEs()) {
         src(
             "https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-icu/analysis-icu-${version}.zip")
-        dest(
-            layout.buildDirectory.map {
-              it.file("cache/analysis-icu-elasticsearch-${version}.zip")
-            })
+        dest(layout.buildDirectory.file("cache/analysis-icu-elasticsearch-${version}.zip"))
       } else {
         src(
             "https://artifacts.opensearch.org/releases/plugins/analysis-icu/${version}/analysis-icu-${version}.zip")
-        dest(layout.buildDirectory.map { it.file("cache/analysis-icu-opensearch-${version}.zip") })
+        dest(layout.buildDirectory.file("cache/analysis-icu-opensearch-${version}.zip"))
       }
 
       overwrite(false)

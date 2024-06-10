@@ -1,0 +1,52 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+  id("java-library")
+  id("com.worksap.nlp.sudachi.es")
+  id("com.worksap.nlp.sudachi.esc")
+  id("com.diffplug.spotless")
+  id("org.jetbrains.kotlin.jvm")
+  id("org.sonarqube")
+}
+
+version = properties["pluginVersion"] ?: "SNAPSHOT"
+
+tasks.compileKotlin { compilerOptions.jvmTarget.set(JvmTarget.JVM_11) }
+
+tasks.compileTestKotlin { compilerOptions.jvmTarget.set(JvmTarget.JVM_11) }
+
+dependencies {
+  implementation(project(":spi"))
+  testCompileOnly("junit:junit:4.13.1")
+  testImplementation("org.apache.logging.log4j:log4j-core:2.17.2")
+  testImplementation("org.jetbrains.kotlin:kotlin-test-junit") { isTransitive = false }
+}
+
+spotless {
+  // watch for https://github.com/diffplug/spotless/issues/911 to be closed
+  ratchetFrom("origin/develop")
+  encoding("UTF-8") // all formats will be interpreted as UTF-8
+  val formatter = rootProject.projectDir.toPath().resolve(".formatter")
+
+  format("misc") {
+    target("*.gradle", "*.md", ".gitignore", "*.txt", "*.csv")
+
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+  java {
+    // don"t need to set target, it is inferred from java
+    // version list:
+    // https://github.com/diffplug/spotless/tree/main/lib-extra/src/main/resources/com/diffplug/spotless/extra/eclipse_jdt_formatter
+
+    eclipse("4.21.0").configFile(formatter.resolve("eclipse-formatter.xml"))
+    licenseHeaderFile(formatter.resolve("license-header"))
+  }
+  kotlinGradle { ktfmt() }
+}
+
+sonar {
+  // this project is only for tests, do not analyze it
+  isSkipProject = true
+}

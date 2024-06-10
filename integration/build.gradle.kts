@@ -92,9 +92,9 @@ val distZip =
       val esKind = sudachiEs.kind.get()
       archiveBaseName.set("${esKind.engine.kind}-${esKind.version}-integration")
       from(
-          project(":subplugin").tasks.named("packageJars").map { outputs.files },
-          project(":subplugin").tasks.named("embedVersion").map { outputs.files },
-          project(":testlib").tasks.named("jar").map { outputs.files },
+          project(":subplugin").tasks.named("packageJars"),
+          project(":subplugin").tasks.named("embedVersion"),
+          project(":testlib").tasks.named("jar"),
       )
     }
 

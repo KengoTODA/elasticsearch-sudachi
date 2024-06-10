@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2023 Works Applications Co., Ltd.
+ * Copyright (c) 2017-2024 Works Applications Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ private inline fun <reified T> provider(
   return AnalysisProvider { a, b, c, d -> fn(a, b, c, d) }
 }
 
-class AnalysisSudachiPlugin(settings: Settings?) : Plugin(), AnalysisPlugin, ExtensiblePlugin {
+class AnalysisSudachiPlugin() : Plugin(), AnalysisPlugin, ExtensiblePlugin {
   private val cacheService = AnalysisCacheService()
   private val classloaders = ArrayList<ClassLoader>()
   private val dictionaryService by lazy { DictionaryService(classloaders) }
